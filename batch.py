@@ -4,7 +4,7 @@ import os
 g_cnt = 0
 
 def md2pdf(src_name):
-    dst_name = '"' + src_name.split('.')[0] + '.pdf' + '"'
+    dst_name = '"' + src_name.replace('.md', '.pdf') + '"'
     src_name = '"' + src_name + '"'
     cmd = 'pandoc.exe -N -s --toc --pdf-engine=xelatex -o {} --template=template.tex {}'.format(dst_name, src_name)
     print(cmd)
@@ -13,7 +13,7 @@ def md2pdf(src_name):
     return cmd
 
 def md2docx(src_name):
-    dst_name = '"' + src_name.split('.')[0] + '.docx' + '"'
+    dst_name = '"' + src_name.replace('.md', '.docx') + '"'
     src_name = '"' + src_name + '"'
     cmd = 'pandoc -N -s --toc -o {} {}'.format(dst_name, src_name)
     print(cmd)
