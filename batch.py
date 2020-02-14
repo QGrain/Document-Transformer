@@ -1,36 +1,56 @@
 import sys
 import os
 
-def md2pdf(src_name, dst_name):
-    cmd = 'pandoc -N -s --toc --pdf-engine=xelatex -o {}.pdf --template=template.tex {}'.format(dst_name, src_name)
+g_cnt = 0
+
+def md2pdf(src_name):
+    dst_name = '"' + src_name.split('.')[0] + '.pdf' + '"'
+    src_name = '"' + src_name + '"'
+    cmd = 'pandoc.exe -N -s --toc --pdf-engine=xelatex -o {} --template=template.tex {}'.format(dst_name, src_name)
+    print(cmd)
+    os.system(cmd)
+    print('finish transformation of {}\n'.format(dst_name))
     return cmd
 
-def md2docx(src_name, dst_name):
-    cmd = 'pandoc -N -s --toc -o {}.docx {}'.format(dst_name, src_name)
+def md2docx(src_name):
+    dst_name = '"' + src_name.split('.')[0] + '.docx' + '"'
+    src_name = '"' + src_name + '"'
+    cmd = 'pandoc -N -s --toc -o {} {}'.format(dst_name, src_name)
+    print(cmd)
+    os.system(cmd)
+    print('finish transformation of {}\n'.format(dst_name))
     return cmd
 
 
-def batchTrans(path):
-    if os.path.isdir(path):
-        
-    pass
+def batchTrans(path, targetType = None):
+    global g_cnt
+    if targetType == None:
+        print('You should specify a target file type\n')
+    elif os.path.isdir(path):
+        fileList = os.listdir(path)
+        for one in fileList:
+            batchTrans(path + '\\' + one, targetType)
+    elif path.split('.')[-1] == 'md':
+        g_cnt = g_cnt + 1
+        if targetType == 'pdf':
+            md2pdf(path)
+        elif targetType == 'docx':
+            md2docx(path)
+    else:
+        print('Error file type\n')
+
 
 if __name__ == "__main__":
     argc = len(sys.argv)
-    
-    if sys.argv[1] == '-h' or sys.argv[1] == '--help' or sys.argv[1] == '/h':
+    if argc == 2 and sys.argv[1] != '-t':
         print('Usage: batch.py [-option] [option value] [source file]\n')
-        print('-h for help, see the usage\n')
-        print('-t for target, specify target file type [pdf|docx|...todo]\n')
+        print('\t\t-h for help, see the usage\n')
+        print('\t\t-t for target, specify target file type [pdf|docx|...todo]\n')
 
     elif argc == 4 and (sys.argv[1] == '-t' or sys.argv[1] == '--target'):
-        if sys.argv[3]:
-            src_name = sys.argv[3].split('/')[-1]
-            dst_name = src_name.split('.')[0]
+        batchTrans(sys.argv[3], sys.argv[2])
+        fileStr = 'file' if g_cnt <= 1 else 'files'
+        print('Finish transformation of %d %s\n' %(g_cnt, fileStr))
 
-        if sys.argv[2] == 'pdf':
-            os.system(md2pdf(src_name, dst_name))
-        elif sys.argv[2] == 'docx':
-            os.system(md2docx(src_name, dst_name))
 
     
