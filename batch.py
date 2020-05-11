@@ -6,7 +6,7 @@ g_cnt = 0
 def md2pdf(src_name):
     dst_name = '"' + src_name.replace('.md', '.pdf') + '"'
     src_name = '"' + src_name + '"'
-    cmd = 'pandoc.exe -N -s --toc --pdf-engine=xelatex -o {} --template=template.tex {}'.format(dst_name, src_name)
+    cmd = 'pandoc -N -s --toc --pdf-engine=xelatex -o {} --template=template.tex {}'.format(dst_name, src_name)
     print(cmd)
     os.system(cmd)
     print('finish transformation of {}\n'.format(dst_name))
